@@ -51,27 +51,31 @@ public class Main {
 
     private static HashMap<String, FileNode> nodeMap = new HashMap<>();
     private static HashSet<FileNode> notVisited = new HashSet<>();
+    private static HashSet<FileNode> nodesRequiredForOthers = new HashSet<>();
     private static ArrayList<FileNode> sortedList = new ArrayList<>();
+    private static Path rootPath;
 
     public static void main(String[] args) {
-        String directoryPath = "";
+        String directoryPathString = "";
         // ask user to enter path to the root folder
         System.out.println("Enter path to the root folder:");
         Scanner scanner = new Scanner(System.in);
-        directoryPath = scanner.nextLine();
+        directoryPathString = scanner.nextLine();
         // check if path was entered
-        if (directoryPath.isEmpty()) {
+        if (directoryPathString.isEmpty()) {
             System.out.println("Path is empty");
             return;
         }
         // check if path is valid directory
-        File rootFolder = new File(directoryPath);
+        File rootFolder = new File(directoryPathString);
         if (!rootFolder.isDirectory()) {
             System.out.println("Path is not a directory");
             return;
         }
 
-        mapAllFilesInDirectory(directoryPath);
+        rootPath = Paths.get(directoryPathString);
+
+        mapAllFilesInDirectory(directoryPathString);
 
         // initialize required filenodes
         for (FileNode node : nodeMap.values()) {
@@ -84,28 +88,21 @@ public class Main {
             return;
         }
 
-        // create list of files
-        // add all files from root folder to the list
-        List<File> files = new ArrayList<>();
-        try {
-            files = new ArrayList<>(Arrays.asList(Objects.requireNonNull(rootFolder.listFiles())));
-        } catch (NullPointerException e) {
-            System.out.println("No files in the directory");
-            return;
-        }
-        for (int i = 0; i < files.size(); i++) {
-            File file = files.get(i);
-            // if file is directory, add all files from this directory to the list
-            if (file.isDirectory()) {
-                files.addAll(Arrays.asList(Objects.requireNonNull(file.listFiles())));
-            }
-        }
-        String resultFilePath = directoryPath + File.separator + "concatenated.txt";
+        // create sorted list
+        buildSortedFileList();
+
+        // concatenate files in order of sorted list
+        writeFilesAsOne();
+
+        System.out.println("Concatenation finished");
+
+
+        /*String resultFilePath = directoryPath + File.separator + "concatenated.txt";
         File file = new File(resultFilePath);
         List<String> list = new ArrayList<>();
         list.add(file.getName());
         list = getFiles(file, list);
-        System.out.println(list);
+        System.out.println(list);*/
     }
 
     private static void mapAllFilesInDirectory(String directoryPath) {
@@ -144,9 +141,11 @@ public class Main {
                 if (line.startsWith("require")) {
                     String[] parts = line.split(" ");
                     if (parts.length == 2) {
-                        String path = Paths.get(parts[1].substring(1, parts[1].length() - 1)).toAbsolutePath().toString();
+                        String path = Paths.get(rootPath.toString(), parts[1].substring(1, parts[1].length() - 1)).
+                                toAbsolutePath().toString();
                         if (nodeMap.containsKey(path)) {
                             node.addRequiredFileNode(nodeMap.get(path));
+                            nodesRequiredForOthers.add(nodeMap.get(path));
                         }
                     }
                 }
@@ -169,7 +168,7 @@ public class Main {
                 }
             }
         }
-        return true;
+        return false;
     }
 
     private static boolean hasCycleDependencies(FileNode node, HashSet<FileNode> visited) {
@@ -186,13 +185,46 @@ public class Main {
         return false;
     }
 
-    private void buildFileList() {
-        if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
-                buildFileList(f, list);
-            }
-        } else {
-            list.add(file.getName());
+    private static void buildSortedFileList() {
+        notVisited = new HashSet<>(nodeMap.values());
+        // get nodes that are not in nodesRequiredForOthers, we can start building list from them
+        HashSet<FileNode> mostDependentNodes = new HashSet<>(notVisited);
+        mostDependentNodes.removeAll(nodesRequiredForOthers);
+        // start recursive building from most dependent nodes
+        for (FileNode node : mostDependentNodes) {
+            buildSortedFileList(node);
         }
+    }
+
+    private static void buildSortedFileList(FileNode node) {
+        // if visited, then subtree is already built
+        if (!notVisited.contains(node)) {
+            return;
+        }
+        notVisited.remove(node);
+        for (FileNode requiredNode : node.requiredFileNodes) {
+            buildSortedFileList(requiredNode);
+        }
+        sortedList.add(node);
+    }
+
+    private static void writeFilesAsOne() {
+        String resultFilePath = sortedList.get(0).getFilePath().substring(0, sortedList.get(0).getFilePath().lastIndexOf(File.separator)) + File.separator + "concatenated.txt";
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(resultFilePath))) {
+            for (FileNode node : sortedList) {
+                try (BufferedReader br = new BufferedReader(new FileReader(node.getFilePath()))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        bw.write(line);
+                        bw.newLine();
+                    }
+                } catch (IOException e) {
+                    System.out.println("Error while reading file");
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error while writing file");
+        }
+        System.out.println("Concatenated file is located at " + resultFilePath);
     }
 }
