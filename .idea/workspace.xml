@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="59d56e83-0481-48c3-8611-b7ba09464b50" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FileNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/smartcat/FileNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/smartcat/FileNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/smartcat/FileNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/smartcat/SmartCat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/smartcat/SmartCat.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,14 +30,14 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="SmartCat" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Main" />
@@ -65,7 +64,9 @@
       <workItem from="1672947272704" duration="1555000" />
       <workItem from="1673031725982" duration="6229000" />
       <workItem from="1673106908398" duration="2508000" />
-      <workItem from="1672659040856" duration="1740000" />
+      <workItem from="1672659040856" duration="2501000" />
+      <workItem from="1673259140008" duration="672000" />
+      <workItem from="1673268173674" duration="4750000" />
     </task>
     <servers />
   </component>
